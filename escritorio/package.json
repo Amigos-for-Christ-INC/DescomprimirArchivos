@@ -1,0 +1,116 @@
+{
+  "name": "descomprimir-afc",
+  "productName": "Descomprimir AFC",
+  "version": "1.0.0",
+  "description": "Abra y cree archivos comprimidos sin internet. Herramienta de Amigos for Christ.",
+  "author": "Amigos for Christ - Departamento de TI",
+  "license": "UNLICENSED",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --win --x64"
+  },
+  "build": {
+    "appId": "org.amigosforchrist.descomprimir",
+    "productName": "Descomprimir AFC",
+    "copyright": "Amigos for Christ",
+    "files": [
+      "main.js",
+      "preload.js",
+      "app/**/*",
+      "package.json"
+    ],
+    "asar": true,
+    "asarUnpack": [],
+    "compression": "maximum",
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "win": {
+      "icon": "build/icon.ico",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "fileAssociations": [
+        {
+          "ext": [
+            "zip"
+          ],
+          "name": "Archivo ZIP",
+          "description": "Archivo comprimido ZIP",
+          "icon": "build/icon.ico",
+          "role": "Viewer"
+        },
+        {
+          "ext": [
+            "rar"
+          ],
+          "name": "Archivo RAR",
+          "description": "Archivo comprimido RAR",
+          "icon": "build/icon.ico",
+          "role": "Viewer"
+        },
+        {
+          "ext": [
+            "7z"
+          ],
+          "name": "Archivo 7Z",
+          "description": "Archivo comprimido 7Z",
+          "icon": "build/icon.ico",
+          "role": "Viewer"
+        },
+        {
+          "ext": [
+            "tar",
+            "gz",
+            "tgz",
+            "bz2",
+            "xz"
+          ],
+          "name": "Archivo TAR",
+          "description": "Archivo comprimido",
+          "icon": "build/icon.ico",
+          "role": "Viewer"
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowElevation": true,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Descomprimir AFC",
+      "installerIcon": "build/icon.ico",
+      "uninstallerIcon": "build/icon.ico",
+      "artifactName": "Descomprimir-AFC-Instalador-${version}.exe",
+      "language": "3082",
+      "installerLanguages": [
+        "es_ES"
+      ],
+      "multiLanguageInstaller": false
+    },
+    "portable": {
+      "artifactName": "Descomprimir-AFC-Portable-${version}.exe"
+    },
+    "publish": null
+  },
+  "devDependencies": {
+    "electron": "44.5.1",
+    "electron-builder": "26.15.3"
+  },
+  "repository": "https://github.com/Amigos-for-Christ-INC/DescomprimirArchivos"
+}

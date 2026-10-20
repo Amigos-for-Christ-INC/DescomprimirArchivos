@@ -3,11 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Descompresor AFC</title>
+<title>Descomprimir AFC</title>
 <meta name="description" content="Herramienta interna de Amigos for Christ para abrir y crear archivos comprimidos en el navegador, sin instalar programas.">
 <link rel="icon" type="image/svg+xml" href="img/icono.svg">
 <link rel="icon" type="image/png" sizes="512x512" href="img/icono-512.png">
 <link rel="apple-touch-icon" href="img/icono-180.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0A2240">
 <style>
 /* Layout: banda navy con ícono de la app y logo de Amigos, una sola columna de trabajo (máx. 920px), pestañas Extraer / Comprimir */
 @font-face{font-family:"Raleway";src:url("fonts/Raleway-Variable.woff2") format("woff2");font-weight:100 900;font-display:swap}
@@ -127,8 +129,8 @@ footer .wrap{padding-block:18px 26px;font-size:13px;color:var(--muted);display:f
   <div class="wrap">
     <img class="appicon" src="img/icono.svg" alt="" width="56" height="56">
     <div class="apptitle">
-      <h1>Descompresor</h1>
-      <p>Abra y cree archivos comprimidos sin instalar programas</p>
+      <h1>Descomprimir AFC</h1>
+      <p>Abra y cree archivos comprimidos de forma segura</p>
     </div>
     <img class="logo" src="img/logo-blanco.png" alt="Amigos for Christ">
     <nav class="tabs" role="tablist" aria-label="Modo">
@@ -216,12 +218,12 @@ footer .wrap{padding-block:18px 26px;font-size:13px;color:var(--muted);display:f
 <div class="privacy">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l8 3v6c0 5-3.4 9.4-8 11-4.6-1.6-8-6-8-11V5l8-3z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg>
   <div><strong>Sus archivos no salen de su computadora.</strong>
-  <p>Todo se procesa dentro del navegador. Nada se sube a internet ni a otro servidor, así que puede usarlo con documentos confidenciales.</p></div>
+  <p>Todo se procesa en su propio equipo. Nada se sube a internet ni a otro servidor, así que puede usarlo con documentos confidenciales.</p></div>
 </div>
 
 </div>
 </main>
-<footer><div class="wrap"><span>Herramienta interna de Amigos for Christ · Departamento de TI</span><span>Funciona en Edge, Chrome y Firefox</span></div></footer>
+<footer><div class="wrap"><span>Herramienta interna de Amigos for Christ · Departamento de TI</span><span id="footEnv">Versión 1.0 · Funciona en Edge, Chrome y Firefox</span></div></footer>
 
 <script src="lib/fflate.min.js"></script>
 <script type="module">
@@ -272,6 +274,15 @@ function wireDrop(zone, input, onFiles){
   input.addEventListener("change", () => { if (input.files.length) onFiles({files: input.files}); input.value = ""; });
 }
 wireDrop($("dropX"), $("fileX"), dt => { if (dt.files[0]) openArchive(dt.files[0]); });
+
+/* App de escritorio: abrir archivos desde el Explorador (doble clic / Abrir con) */
+if (window.afcDesktop) {
+  $("footEnv").textContent = "Versión de escritorio " + (window.afcDesktop.version || "1.0") + " · Funciona sin internet";
+  window.afcDesktop.onOpenFile(({ name, dir, data }) => {
+    const f = new File([data], name); f.afcDir = dir;
+    showTab("x"); openArchive(f);
+  });
+}
 
 function resetX(){
   ["xErr","xPw","xWarn","xBody","xProg"].forEach(id => $(id).hidden = true);
@@ -339,7 +350,7 @@ function render(){
     $("xWarnMsg").textContent = `Contiene ${risky.length} ${risky.length===1?"archivo ejecutable o con macros":"archivos ejecutables o con macros"}. Ábralos solo si confía en quien se lo envió.`;
     $("xWarn").hidden = false;
   }
-  $("xToFolder").hidden = !canPickFolder;
+  $("xToFolder").hidden = !(canPickFolder || desk);
   const rows = entries.map((e,i) => {
     const parts = e.path.split("/"); const n = parts.pop(); const p = parts.length ? parts.join("/") + "/" : "";
     const tag = RISKY.has(ext(n)) ? '<span class="tag">Ejecutable</span>' : "";
@@ -368,7 +379,9 @@ $("xFind").addEventListener("input", e => {
   $("xRows").querySelectorAll("tr").forEach(tr => tr.hidden = q && !tr.dataset.q.includes(q));
 });
 
+const desk = window.afcDesktop || null;
 $("xToFolder").onclick = async () => {
+  if (desk) return extractDesktop();
   let dir;
   try { dir = await window.showDirectoryPicker({ mode: "readwrite", id: "afc-extraer" }); }
   catch { return; }
@@ -388,6 +401,23 @@ $("xToFolder").onclick = async () => {
     $("xStatus").innerHTML = `<span class="ok">Listo: ${n} archivos guardados en la carpeta «${esc(root.name)}».</span>`;
   } catch (err) { $("xStatus").textContent = "No se pudo guardar en esa carpeta: " + (err.message || err); }
 };
+async function extractDesktop(){
+  const sel = entries.filter(e => e.sel);
+  const base = (current.name.replace(/(\.tar)?\.[^.]+$/i, "") || "extraido");
+  const target = await desk.pickFolder(current.afcDir || null);
+  if (!target) return;
+  try {
+    let n = 0;
+    for (const e of sel) {
+      const parts = safeParts(e.path); if (!parts.length) continue;
+      await desk.writeFile(target, [safeParts(base)[0] || "extraido", ...parts], await e.file.arrayBuffer());
+      n++; $("xStatus").textContent = `Guardando ${n} de ${sel.length}…`;
+    }
+    $("xStatus").innerHTML = `<span class="ok">Listo: ${n} archivos guardados.</span> <button class="btn ghost" id="xOpenDir" style="display:inline-flex">Abrir carpeta</button>`;
+    const dest = await desk.joinPath(target, safeParts(base)[0] || "extraido");
+    $("xOpenDir").onclick = () => desk.openFolder(dest);
+  } catch (err) { $("xStatus").textContent = "No se pudo guardar: " + (err.message || err); }
+}
 $("xDownload").onclick = async () => {
   const sel = entries.filter(e => e.sel);
   if (sel.length > 1 && sel.length <= 15) {
@@ -471,6 +501,10 @@ $("cGo").onclick = async () => {
     $("cStatus").textContent = "No se pudo crear el ZIP: " + (err.message || err) + (/memory|allocation/i.test(String(err)) ? ". Pruebe con menos archivos a la vez." : "");
   } finally { $("cProg").hidden = true; $("cGo").disabled = false; }
 };
+if ("launchQueue" in window) window.launchQueue.setConsumer(async p => { if (p.files && p.files[0]) { showTab("x"); openArchive(await p.files[0].getFile()); } });
+if (!window.afcDesktop && "serviceWorker" in navigator && location.protocol === "https:") {
+  navigator.serviceWorker.register("sw.js").catch(() => {});
+}
 </script>
 </body>
 </html>

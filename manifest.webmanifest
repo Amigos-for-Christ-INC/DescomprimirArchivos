@@ -1,0 +1,19 @@
+{
+  "name": "Descomprimir AFC",
+  "short_name": "Descomprimir",
+  "description": "Abra y cree archivos comprimidos sin instalar programas. Herramienta de Amigos for Christ.",
+  "lang": "es",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#F5EDEC",
+  "theme_color": "#0A2240",
+  "icons": [
+    { "src": "img/icono.svg", "sizes": "any", "type": "image/svg+xml" },
+    { "src": "img/icono-180.png", "sizes": "180x180", "type": "image/png" },
+    { "src": "img/icono-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+  ],
+  "file_handlers": [
+    { "action": "./", "accept": { "application/zip": [".zip"], "application/x-7z-compressed": [".7z"], "application/vnd.rar": [".rar"], "application/gzip": [".gz", ".tgz"], "application/x-tar": [".tar"] } }
+  ]
+}

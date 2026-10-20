@@ -1,4 +1,4 @@
-# Descompresor AFC
+# Descomprimir AFC
 
 Herramienta interna de Amigos for Christ para abrir y crear archivos comprimidos desde el navegador, sin instalar WinRAR, 7-Zip ni otros programas.
 
@@ -49,3 +49,7 @@ No depende de ningún servicio externo: todas las librerías van incluidas en la
 - Crear archivos con contraseña o en formato RAR/7Z no está incluido; solo crea ZIP sin contraseña.
 - Todo se carga en memoria: con comprimidos de varios GB puede quedarse corto en equipos con poca RAM.
 - "Extraer en una carpeta" solo existe en Edge y Chrome. En Firefox se descarga archivo por archivo (hasta 15 a la vez).
+
+## Instalar en la PC (sin internet)
+- **Desde la web:** en Edge o Chrome, abra el sitio y use el ícono «Instalar aplicación» de la barra de direcciones. Después funciona sin conexión.
+- **Instalador de Windows:** ver la carpeta [`escritorio/`](escritorio/).
