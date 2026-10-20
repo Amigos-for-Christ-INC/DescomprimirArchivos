@@ -1,0 +1,51 @@
+name: Publicar app de escritorio
+
+# Se ejecuta al crear una etiqueta de versión (v1.0.0, v1.1.0...) o manualmente desde la pestaña Actions.
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Etiqueta de la versión (ej. v1.0.0)"
+        required: true
+        default: "v1.0.0"
+
+permissions:
+  contents: write
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Copiar la app web dentro del proyecto de escritorio
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force escritorio/app | Out-Null
+          Copy-Item index.html, manifest.webmanifest escritorio/app/
+          Copy-Item -Recurse lib, img, fonts escritorio/app/
+          Remove-Item -ErrorAction SilentlyContinue escritorio/app/img/logo.png
+
+      - name: Instalar dependencias
+        working-directory: escritorio
+        run: npm ci
+
+      - name: Compilar instalador y portable
+        working-directory: escritorio
+        run: npx electron-builder --win --x64 --publish never
+
+      - name: Publicar en Releases
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.event.inputs.version || github.ref_name }}
+          name: Descomprimir AFC ${{ github.event.inputs.version || github.ref_name }}
+          body_path: escritorio/NOTAS-VERSION.md
+          make_latest: true
+          files: |
+            escritorio/dist/*.exe
