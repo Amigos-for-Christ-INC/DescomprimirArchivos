@@ -223,7 +223,8 @@ footer .wrap{padding-block:18px 26px;font-size:13px;color:var(--muted);display:f
 
 </div>
 </main>
-<footer><div class="wrap"><span>Herramienta interna de Amigos for Christ · Departamento de TI</span><span id="footEnv">Versión 1.0 · Funciona en Edge, Chrome y Firefox</span></div></footer>
+<footer><div class="wrap"><span>Herramienta interna de Amigos for Christ · Departamento de TI</span><a id="getWin" href="https://github.com/Amigos-for-Christ-INC/DescomprimirArchivos/releases/latest" target="_blank" rel="noopener" style="color:var(--accent);font-weight:600">Descargar para Windows (funciona sin internet)</a>
+<span id="footEnv">Versión 1.0 · Funciona en Edge, Chrome y Firefox</span></div></footer>
 
 <script src="lib/fflate.min.js"></script>
 <script type="module">
@@ -277,6 +278,7 @@ wireDrop($("dropX"), $("fileX"), dt => { if (dt.files[0]) openArchive(dt.files[0
 
 /* App de escritorio: abrir archivos desde el Explorador (doble clic / Abrir con) */
 if (window.afcDesktop) {
+  $("getWin").hidden = true;
   $("footEnv").textContent = "Versión de escritorio " + (window.afcDesktop.version || "1.0") + " · Funciona sin internet";
   window.afcDesktop.onOpenFile(({ name, dir, data }) => {
     const f = new File([data], name); f.afcDir = dir;

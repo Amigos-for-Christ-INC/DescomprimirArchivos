@@ -50,6 +50,16 @@ No depende de ningún servicio externo: todas las librerías van incluidas en la
 - Todo se carga en memoria: con comprimidos de varios GB puede quedarse corto en equipos con poca RAM.
 - "Extraer en una carpeta" solo existe en Edge y Chrome. En Firefox se descarga archivo por archivo (hasta 15 a la vez).
 
-## Instalar en la PC (sin internet)
+## Descargar para Windows (sin internet)
+
+**[⬇ Descargar la última versión](https://github.com/Amigos-for-Christ-INC/DescomprimirArchivos/releases/latest)**
+
+- [Instalador](https://github.com/Amigos-for-Christ-INC/DescomprimirArchivos/releases/download/v1.0.0/Descomprimir-AFC-Instalador-1.0.0.exe): instalación normal con acceso directo; aparece en «Abrir con…».
+- [Portable](https://github.com/Amigos-for-Christ-INC/DescomprimirArchivos/releases/download/v1.0.0/Descomprimir-AFC-Portable-1.0.0.exe): se ejecuta sin instalar.
+
+## Publicar una versión nueva
+Cambie `version` en `escritorio/package.json`, y en GitHub vaya a **Actions → Publicar app de escritorio → Run workflow** con la etiqueta nueva (ej. `v1.1.0`). GitHub compila en Windows y publica los .exe en Releases.
+
+## Otras formas de instalar
 - **Desde la web:** en Edge o Chrome, abra el sitio y use el ícono «Instalar aplicación» de la barra de direcciones. Después funciona sin conexión.
 - **Instalador de Windows:** ver la carpeta [`escritorio/`](escritorio/).
