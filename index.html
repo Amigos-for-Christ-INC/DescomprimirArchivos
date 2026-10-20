@@ -294,7 +294,7 @@ async function openArchive(file, password){
     xProgress("Descomprimiendo…");
     await arc.extractFiles();
     let list = await arc.getFilesArray();
-    entries = list.filter(e => e.file && e.file.name).map(e => ({ path: (e.path||"") + e.file.name, file: e.file, sel: true }));
+    entries = list.filter(e => e.file && e.file.name).map(e => ({ path: ((e.path||"") + e.file.name).replace(/^(\.\/)+/, ""), file: e.file, sel: true }));
     if (!entries.length) {
       const single = await trySingleStream(file);
       if (single) entries = [single];
