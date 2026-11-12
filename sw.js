@@ -1,7 +1,7 @@
 /* Descomprimir AFC: guarda la app para usarla sin internet.
    La página principal se pide primero a internet (para recibir actualizaciones)
    y solo si no hay conexión se usa la copia guardada. */
-const CACHE = "afc-v1.0.2";
+const CACHE = "afc-v1.0.3";
 const FILES = ["./", "index.html", "manifest.webmanifest", "lib/libarchive.js", "lib/worker-bundle.js", "lib/libarchive.wasm", "lib/fflate.min.js", "fonts/Raleway-Variable.woff2", "img/icono.svg", "img/icono-180.png", "img/icono-512.png", "img/logo-blanco.png"];
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES.map(f => new Request(f, { cache: "reload" })))).then(() => self.skipWaiting()));
